@@ -44,8 +44,16 @@ public class BackupDuplicated {
 		Formatter fnameFormatter = new Formatter();
 		long lastMod = file.lastModified();
 		String filename = file.getAbsolutePath();
-		String filename_body = filename.substring(0,filename.lastIndexOf("."));
-		String filename_ext  = filename.substring(filename.lastIndexOf("."));
+		String filename_body;
+		String filename_ext;
+		int pos;
+		if ( (pos = filename.lastIndexOf(".")) < 0 ) {
+			filename_body = filename;
+			filename_ext = "";
+		} else {
+			filename_body = filename.substring(0,filename.lastIndexOf("."));
+			filename_ext  = filename.substring(filename.lastIndexOf("."));
+		}
 
 		String renameFname = fnameFormatter.format("%1$s_tmp%2$d%3$s",filename_body,lastMod,filename_ext).toString();
 		fnameFormatter.close();
@@ -59,6 +67,24 @@ public class BackupDuplicated {
 		String copyFname = fnameFormatter.format("%1$s_%2$tY%2$tm%2$td%2$tH%2$tM%3$s",filename_body,f2Rename.lastModified(),filename_ext).toString();
 		fnameFormatter.close();
 		File copyFile = new File(copyFname);
+		int copyGeneration = 0;
+		String copyFnameBase = new String(copyFname);
+		while ( copyFile.exists() ) {
+			fnameFormatter = new Formatter();
+			String copyFname_body;
+			String copyFname_ext;
+			int copyPos;
+			if ( (copyPos = copyFname.lastIndexOf(".")) < 0 ) {
+				copyFname_body = copyFnameBase;
+				copyFname_ext = "";
+			} else {
+				copyFname_body = copyFnameBase.substring(0,copyFnameBase.lastIndexOf("."));
+				copyFname_ext  = copyFnameBase.substring(copyFnameBase.lastIndexOf("."));
+			}
+			copyFname = fnameFormatter.format("%1s_%2$03d%3$s",copyFname_body,copyGeneration++,copyFname_ext).toString();
+			copyFile = new File(copyFname);
+			fnameFormatter.close();
+		}
 
 		BufferedInputStream biStream = new BufferedInputStream(new FileInputStream(f2Rename));
 		BufferedOutputStream boStream = new BufferedOutputStream(new FileOutputStream(copyFile));
