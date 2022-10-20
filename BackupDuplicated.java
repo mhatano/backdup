@@ -51,8 +51,8 @@ public class BackupDuplicated {
 			filename_body = filename;
 			filename_ext = "";
 		} else {
-			filename_body = filename.substring(0,filename.lastIndexOf("."));
-			filename_ext  = filename.substring(filename.lastIndexOf("."));
+			filename_body = filename.substring(0,pos);
+			filename_ext  = filename.substring(pos);
 		}
 
 		String renameFname = fnameFormatter.format("%1$s_tmp%2$d%3$s",filename_body,lastMod,filename_ext).toString();
@@ -74,12 +74,12 @@ public class BackupDuplicated {
 			String copyFname_body;
 			String copyFname_ext;
 			int copyPos;
-			if ( (copyPos = copyFname.lastIndexOf(".")) < 0 ) {
+			if ( (copyPos = copyFnameBase.lastIndexOf(".")) < 0 ) {
 				copyFname_body = copyFnameBase;
 				copyFname_ext = "";
 			} else {
-				copyFname_body = copyFnameBase.substring(0,copyFnameBase.lastIndexOf("."));
-				copyFname_ext  = copyFnameBase.substring(copyFnameBase.lastIndexOf("."));
+				copyFname_body = copyFnameBase.substring(0,copyPos);
+				copyFname_ext  = copyFnameBase.substring(copyPos);
 			}
 			copyFname = fnameFormatter.format("%1s_%2$03d%3$s",copyFname_body,copyGeneration++,copyFname_ext).toString();
 			copyFile = new File(copyFname);
